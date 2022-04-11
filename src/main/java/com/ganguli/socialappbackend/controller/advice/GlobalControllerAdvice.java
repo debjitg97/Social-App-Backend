@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -14,17 +13,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ganguli.socialappbackend.dto.ErrorResponseDTO;
+import com.ganguli.socialappbackend.exception.CurrentPasswordIncorrectException;
+import com.ganguli.socialappbackend.exception.CurrentPasswordSameAsNewException;
 import com.ganguli.socialappbackend.exception.UserAlreadyExistsException;
 import com.ganguli.socialappbackend.exception.UserNotFoundException;
 
 @RestControllerAdvice
 public class GlobalControllerAdvice {
-	
-	@Value(value = "${userName.alreadyExists}")
-	private String userNameAlreadyExists;
-	
-	@Value(value = "${userName.doesNotExist}")
-	private String userNameDoesNotExists;
 	
 	@ExceptionHandler(value = { MethodArgumentNotValidException.class } )
 	public ResponseEntity<ErrorResponseDTO> badRequest(MethodArgumentNotValidException ex) {
@@ -34,18 +29,16 @@ public class GlobalControllerAdvice {
 		return new ResponseEntity<>(new ErrorResponseDTO(messages, HttpStatus.BAD_REQUEST.value(), new Date()), HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler(value = { UserAlreadyExistsException.class })
-	public ResponseEntity<ErrorResponseDTO> userNameAlreadyExists(UserAlreadyExistsException ex) {
+	@ExceptionHandler(value = { 
+		UserAlreadyExistsException.class, 
+		UserNotFoundException.class, 
+		CurrentPasswordIncorrectException.class,
+		CurrentPasswordSameAsNewException.class
+	})
+	public ResponseEntity<ErrorResponseDTO> badRequest(Exception ex) {
 		List<String> messages = new ArrayList<>();
-		messages.add(userNameAlreadyExists);
+		messages.add(ex.getMessage());
 		return new ResponseEntity<>(new ErrorResponseDTO(messages, HttpStatus.BAD_REQUEST.value(), new Date()), HttpStatus.BAD_REQUEST);
-	}
-	
-	@ExceptionHandler(value = { UserNotFoundException.class })
-	public ResponseEntity<ErrorResponseDTO> userNamenotFound(UserNotFoundException ex) {
-		List<String> messages = new ArrayList<>();
-		messages.add(userNameDoesNotExists);
-		return new ResponseEntity<>(new ErrorResponseDTO(messages, HttpStatus.NOT_FOUND.value(), new Date()), HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(value = { AuthenticationException.class })
