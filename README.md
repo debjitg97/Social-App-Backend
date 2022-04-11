@@ -8,3 +8,8 @@ Hosted at https://social-app-apis.herokuapp.com/
 * Uses Swagger UI for API documentation
 * Standardized error response object structure
 * Allows user to login, register and view their details
+
+## Tech Stack
+* Java 11
+* Spring-Boot
+* MySQL
