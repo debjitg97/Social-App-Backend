@@ -7,7 +7,7 @@ Hosted at https://social-app-apis.herokuapp.com/
 * Uses BCrypt Password Encoder to store the password in the database
 * Uses Swagger UI for API documentation
 * Standardized error response object structure
-* Allows user to login, register and view their details
+* Allows user to login, register, view their details and change their password
 
 ## Tech Stack
 * Java 11
