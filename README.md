@@ -1,5 +1,6 @@
 # Social App Backend
 Backend Application for the Social App to host the REST APIs. 
+Hosted at https://social-app-apis.herokuapp.com/
 
 ## Features 
 * Uses Spring Security to authorize using JSON Web Tokens
