@@ -3,14 +3,12 @@ package com.ganguli.socialappbackend.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @ApiModel(description = "User Data Transfer Object")
 public class SocialUserDTO {
 	@ApiModelProperty(notes = "User ID", example = "11")

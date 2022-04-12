@@ -6,14 +6,12 @@ import javax.validation.constraints.Size;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @ApiModel(description = "Change User Password Data Transfer Object")
 public class SocialUserChangePasswordDTO {
 	@ApiModelProperty(notes = "Current Password", example = "ironManSucks123+")

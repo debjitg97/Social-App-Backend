@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ganguli.socialappbackend.dto.ErrorResponseDTO;
-import com.ganguli.socialappbackend.exception.CurrentPasswordIncorrectException;
-import com.ganguli.socialappbackend.exception.CurrentPasswordSameAsNewException;
-import com.ganguli.socialappbackend.exception.UserAlreadyExistsException;
-import com.ganguli.socialappbackend.exception.UserNotFoundException;
+import com.ganguli.socialappbackend.exception.BadRequestException;
 
 @RestControllerAdvice
 public class GlobalControllerAdvice {
@@ -29,13 +26,8 @@ public class GlobalControllerAdvice {
 		return new ResponseEntity<>(new ErrorResponseDTO(messages, HttpStatus.BAD_REQUEST.value(), new Date()), HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler(value = { 
-		UserAlreadyExistsException.class, 
-		UserNotFoundException.class, 
-		CurrentPasswordIncorrectException.class,
-		CurrentPasswordSameAsNewException.class
-	})
-	public ResponseEntity<ErrorResponseDTO> badRequest(Exception ex) {
+	@ExceptionHandler(value = { BadRequestException.class })
+	public ResponseEntity<ErrorResponseDTO> badRequest(BadRequestException ex) {
 		List<String> messages = new ArrayList<>();
 		messages.add(ex.getMessage());
 		return new ResponseEntity<>(new ErrorResponseDTO(messages, HttpStatus.BAD_REQUEST.value(), new Date()), HttpStatus.BAD_REQUEST);

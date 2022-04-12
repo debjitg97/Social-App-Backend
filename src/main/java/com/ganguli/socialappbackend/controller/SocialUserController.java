@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,11 +21,9 @@ import com.ganguli.socialappbackend.dto.ErrorResponseDTO;
 import com.ganguli.socialappbackend.dto.SocialUserAddDTO;
 import com.ganguli.socialappbackend.dto.SocialUserChangePasswordDTO;
 import com.ganguli.socialappbackend.dto.SocialUserDTO;
+import com.ganguli.socialappbackend.dto.SocialUserEditDTO;
 import com.ganguli.socialappbackend.dto.SocialUserLoginDTO;
-import com.ganguli.socialappbackend.exception.CurrentPasswordIncorrectException;
-import com.ganguli.socialappbackend.exception.CurrentPasswordSameAsNewException;
-import com.ganguli.socialappbackend.exception.UserAlreadyExistsException;
-import com.ganguli.socialappbackend.exception.UserNotFoundException;
+import com.ganguli.socialappbackend.exception.BadRequestException;
 import com.ganguli.socialappbackend.service.SocialUserService;
 import com.ganguli.socialappbackend.util.JWTUtil;
 
@@ -62,7 +61,7 @@ public class SocialUserController {
     })
     @ResponseStatus(code = HttpStatus.CREATED)
 	@PostMapping(value = "/add", produces={"application/json"})
-	public ResponseEntity<SocialUserDTO> addUser(@Valid @RequestBody SocialUserAddDTO userAddDTO)throws UserAlreadyExistsException {
+	public ResponseEntity<SocialUserDTO> addUser(@Valid @RequestBody SocialUserAddDTO userAddDTO)throws BadRequestException {
 		SocialUserDTO socialUserDTO = socialUserService.addUser(userAddDTO);
 		return new ResponseEntity<>(socialUserDTO, HttpStatus.CREATED);
 	}
@@ -74,23 +73,51 @@ public class SocialUserController {
     })
     @ResponseStatus(code = HttpStatus.OK)
 	@GetMapping(value = "/get", produces={"application/json"})
-	public ResponseEntity<SocialUserDTO> getUser(@ApiIgnore final Authentication authentication) throws UserNotFoundException {
+	public ResponseEntity<SocialUserDTO> getUser(@ApiIgnore final Authentication authentication) throws BadRequestException {
 		String userName = authentication.getName();
 		return new ResponseEntity<>(this.socialUserService.findByUserName(userName), HttpStatus.OK);
 	}
     
-    @ApiOperation(value = "Change Password")
+    @ApiOperation(value = "Edit Password")
     @ApiResponses({
     	@ApiResponse(code = 200, message = "OK", response = String.class),
     	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),
     	@ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponseDTO.class)
     })
     @ResponseStatus(code = HttpStatus.OK)
-    @PatchMapping(value = "/change-password", produces={"application/json"})
-    public ResponseEntity<String> changePassword(@Valid @RequestBody SocialUserChangePasswordDTO socialUserChangePasswordDTO, 
+    @PatchMapping(value = "/edit-password", produces={"application/json"})
+    public ResponseEntity<String> editPassword(@Valid @RequestBody SocialUserChangePasswordDTO socialUserChangePasswordDTO, 
     		@ApiIgnore final Authentication authentication) 
-    				throws UserNotFoundException, CurrentPasswordIncorrectException, CurrentPasswordSameAsNewException {
-        String result = socialUserService.changePassword(socialUserChangePasswordDTO, authentication.getName());
+    				throws BadRequestException {
+        String result = socialUserService.editPassword(socialUserChangePasswordDTO, authentication.getName());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+    @ApiOperation(value = "Edit Details")
+    @ApiResponses({
+    	@ApiResponse(code = 200, message = "OK", response = SocialUserDTO.class),
+    	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),
+    	@ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponseDTO.class)
+    })
+    @ResponseStatus(code = HttpStatus.OK)
+    @PatchMapping(value = "/edit-details", produces={"application/json"})
+    public ResponseEntity<SocialUserDTO> editDetails(@Valid @RequestBody SocialUserEditDTO socialUserEditDTO, 
+    		@ApiIgnore final Authentication authentication) 
+    				throws BadRequestException {
+        SocialUserDTO userDTO = socialUserService.editDetails(socialUserEditDTO, authentication.getName());
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+    
+    @ApiOperation(value = "Delete User")
+    @ApiResponses({
+    	@ApiResponse(code = 200, message = "OK", response = String.class),
+    	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),
+    	@ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponseDTO.class)
+    })
+    @ResponseStatus(code = HttpStatus.OK)
+    @DeleteMapping(value = "/delete", produces={"application/json"})
+    public ResponseEntity<String> deleteUser(@ApiIgnore final Authentication authentication) throws BadRequestException {
+        String result = socialUserService.deleteUser(authentication.getName());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

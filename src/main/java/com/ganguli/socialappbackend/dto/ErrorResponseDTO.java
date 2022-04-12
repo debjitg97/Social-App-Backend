@@ -9,21 +9,19 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @ApiModel(description = "Error Response Data Transfer Object")
 public class ErrorResponseDTO {
 	
 	@ApiModelProperty(notes = "List of error messages", example = "[\"Error1\",\"Error2\"]")
 	private List<String> messages;
 	
-	@ApiModelProperty(notes = "Error status code", example = "200")
+	@ApiModelProperty(notes = "Error status code", example = "40X")
 	private Integer status;
 	
 	@ApiModelProperty(notes = "Time Stamp for error", example = "01-01-1990 00:00:00")

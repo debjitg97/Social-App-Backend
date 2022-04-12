@@ -1,9 +1,9 @@
 package com.ganguli.socialappbackend.exception;
 
-public class UserAlreadyExistsException extends Exception {
+public class BadRequestException extends Exception {
 	private static final long serialVersionUID = 1L;
 	
-	public UserAlreadyExistsException(String message) {
+	public BadRequestException(String message) {
 		super(message);
 	}
 }

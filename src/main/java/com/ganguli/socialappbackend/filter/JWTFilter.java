@@ -38,14 +38,17 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = socialUserSecurityService.loadUserByUsername(userName);
-            if (JWTUtil.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
+        	try {
+	            UserDetails userDetails = socialUserSecurityService.loadUserByUsername(userName);
+	            if (JWTUtil.validateToken(token, userDetails)) {
+	                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+	                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+	                usernamePasswordAuthenticationToken
+	                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+	                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+	            }
+        	}
+        	catch(Exception e) { }
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }

@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@ApiModel(description = "Add User Data Transfer Object")
-public class SocialUserAddDTO {
+@ApiModel(description = "User Edit Data Transfer Object")
+public class SocialUserEditDTO {
 	@ApiModelProperty(notes = "First Name", example = "Bruce")
 	@NotNull(message = "{firstName.missing}")
 	@Size(min = 3, max = 16, message = "{firstName.invalidSize}")
@@ -26,16 +26,4 @@ public class SocialUserAddDTO {
 	@Size(min = 3, max = 16, message = "{lastName.invalidSize}")
 	@Pattern(regexp = "^[a-zA-Z]*", message = "{lastName.invalidPattern}")
 	private String lastName;
-	
-	@ApiModelProperty(notes = "User Name", example = "bruceWayne_11")
-	@NotNull(message = "{userName.missing}")
-	@Size(min = 6, max = 16, message = "{userName.invalidSize}")
-	@Pattern(regexp = "^[a-zA-Z0-9_]*", message = "{userName.invalidPattern}")
-	private String userName;
-	
-	@ApiModelProperty(notes = "User Password", example = "ironManSucks123+")
-	@NotNull(message = "{userPassword.missing}")
-	@Size(min = 8, max = 16, message = "{userPassword.invalidSize}")
-	private String userPassword;
-	
 }

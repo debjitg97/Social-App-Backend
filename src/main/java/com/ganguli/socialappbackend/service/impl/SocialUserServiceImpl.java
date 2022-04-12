@@ -10,11 +10,9 @@ import org.springframework.stereotype.Service;
 import com.ganguli.socialappbackend.dto.SocialUserAddDTO;
 import com.ganguli.socialappbackend.dto.SocialUserChangePasswordDTO;
 import com.ganguli.socialappbackend.dto.SocialUserDTO;
+import com.ganguli.socialappbackend.dto.SocialUserEditDTO;
 import com.ganguli.socialappbackend.entity.SocialUser;
-import com.ganguli.socialappbackend.exception.CurrentPasswordIncorrectException;
-import com.ganguli.socialappbackend.exception.CurrentPasswordSameAsNewException;
-import com.ganguli.socialappbackend.exception.UserAlreadyExistsException;
-import com.ganguli.socialappbackend.exception.UserNotFoundException;
+import com.ganguli.socialappbackend.exception.BadRequestException;
 import com.ganguli.socialappbackend.repository.SocialUserRepository;
 import com.ganguli.socialappbackend.service.SocialUserService;
 
@@ -42,18 +40,24 @@ public class SocialUserServiceImpl implements SocialUserService{
 	@Value(value = "${currentPassword.sameAsNew}")
 	private String currentPasswordSameAsNew;
 	
+	@Value(value = "${currentDetails.sameAsNew}")
+	private String currentDetailsSameAsNew;
+	
+	@Value(value = "${delete.success}")
+	private String deleteSuccess;
+	
 	@Override
-	public SocialUserDTO findByUserName(String userName) throws UserNotFoundException {
+	public SocialUserDTO findByUserName(String userName) throws BadRequestException {
 		Optional<SocialUser> userOp = socialUserRepository.findByUserName(userName);
-		SocialUser user = userOp.orElseThrow(() -> new UserNotFoundException(userNameDoesNotExists));
+		SocialUser user = userOp.orElseThrow(() -> new BadRequestException(userNameDoesNotExists));
 		return new SocialUserDTO(user.getUserId(), user.getFirstName(), user.getLastName(), user.getUserName());
 	}
 
 	@Override
-	public SocialUserDTO addUser(SocialUserAddDTO userAddDTO) throws UserAlreadyExistsException {
+	public SocialUserDTO addUser(SocialUserAddDTO userAddDTO) throws BadRequestException {
 		Optional<SocialUser> userOp = socialUserRepository.findByUserName(userAddDTO.getUserName());
 		if(userOp.isPresent())
-			throw new UserAlreadyExistsException(userNameAlreadyExists);
+			throw new BadRequestException(userNameAlreadyExists);
 		SocialUser user = socialUserRepository.save(new SocialUser(
 				null, 
 				userAddDTO.getFirstName(), 
@@ -64,16 +68,36 @@ public class SocialUserServiceImpl implements SocialUserService{
 	}
 
 	@Override
-	public String changePassword(SocialUserChangePasswordDTO socialUserChangePasswordDTO, String userName)
-			throws UserNotFoundException, CurrentPasswordIncorrectException, CurrentPasswordSameAsNewException {
+	public String editPassword(SocialUserChangePasswordDTO socialUserChangePasswordDTO, String userName)
+			throws BadRequestException {
 		Optional<SocialUser> userOp = socialUserRepository.findByUserName(userName);
-		SocialUser user = userOp.orElseThrow(() -> new UserNotFoundException(userNameDoesNotExists));
+		SocialUser user = userOp.orElseThrow(() -> new BadRequestException(userNameDoesNotExists));
 		if(!passwordEncoder.matches(socialUserChangePasswordDTO.getCurrentPassword(), user.getUserPassword()))
-			throw new CurrentPasswordIncorrectException(currentPasswordIncorrect);
+			throw new BadRequestException(currentPasswordIncorrect);
 		if(passwordEncoder.matches(socialUserChangePasswordDTO.getNewPassword(), user.getUserPassword()))
-			throw new CurrentPasswordSameAsNewException(currentPasswordSameAsNew);
+			throw new BadRequestException(currentPasswordSameAsNew);
 		user.setUserPassword(passwordEncoder.encode(socialUserChangePasswordDTO.getNewPassword()));
 		socialUserRepository.save(user);
 		return changePasswordSuccess;
+	}
+
+	@Override
+	public SocialUserDTO editDetails(SocialUserEditDTO socialUserEditDTO, String userName) throws BadRequestException {
+		Optional<SocialUser> userOp = socialUserRepository.findByUserName(userName);
+		SocialUser user = userOp.orElseThrow(() -> new BadRequestException(userNameDoesNotExists));
+		if(user.getFirstName().equals(socialUserEditDTO.getFirstName()) && user.getLastName().equals(socialUserEditDTO.getLastName()))
+			throw new BadRequestException(currentDetailsSameAsNew);
+		user.setFirstName(socialUserEditDTO.getFirstName());
+		user.setLastName(socialUserEditDTO.getLastName());
+		SocialUser savedUser = socialUserRepository.save(user);
+		return new SocialUserDTO(savedUser.getUserId(), savedUser.getFirstName(), savedUser.getLastName(), savedUser.getUserName());
+	}
+
+	@Override
+	public String deleteUser(String userName) throws BadRequestException {
+		Optional<SocialUser> userOp = socialUserRepository.findByUserName(userName);
+		SocialUser user = userOp.orElseThrow(() -> new BadRequestException(userNameDoesNotExists));
+		socialUserRepository.delete(user);
+		return deleteSuccess;
 	}
 }
