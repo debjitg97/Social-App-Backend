@@ -26,8 +26,8 @@ public class GlobalControllerAdvice {
 		return new ResponseEntity<>(new ErrorResponseDTO(messages, HttpStatus.BAD_REQUEST.value(), new Date()), HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler(value = { BadRequestException.class })
-	public ResponseEntity<ErrorResponseDTO> badRequest(BadRequestException ex) {
+	@ExceptionHandler(value = { BadRequestException.class, IllegalArgumentException.class })
+	public ResponseEntity<ErrorResponseDTO> badRequest(Exception ex) {
 		List<String> messages = new ArrayList<>();
 		messages.add(ex.getMessage());
 		return new ResponseEntity<>(new ErrorResponseDTO(messages, HttpStatus.BAD_REQUEST.value(), new Date()), HttpStatus.BAD_REQUEST);

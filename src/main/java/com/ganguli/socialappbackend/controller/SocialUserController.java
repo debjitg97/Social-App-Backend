@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,19 +67,32 @@ public class SocialUserController {
 		return new ResponseEntity<>(socialUserDTO, HttpStatus.CREATED);
 	}
 	
-    @ApiOperation(value = "Get User")
+    @ApiOperation(value = "Get User Details for authenticated User")
     @ApiResponses({
     	@ApiResponse(code = 200, message = "OK", response = SocialUserDTO.class),
+    	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),
     	@ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponseDTO.class)
     })
     @ResponseStatus(code = HttpStatus.OK)
-	@GetMapping(value = "/get", produces={"application/json"})
-	public ResponseEntity<SocialUserDTO> getUser(@ApiIgnore final Authentication authentication) throws BadRequestException {
+	@GetMapping(value = "/details", produces={"application/json"})
+	public ResponseEntity<SocialUserDTO> getAuthenticatedUser(@ApiIgnore final Authentication authentication) throws BadRequestException {
 		String userName = authentication.getName();
 		return new ResponseEntity<>(this.socialUserService.findByUserName(userName), HttpStatus.OK);
 	}
     
-    @ApiOperation(value = "Edit Password")
+    @ApiOperation(value = "Get User Details for given User")
+    @ApiResponses({
+    	@ApiResponse(code = 200, message = "OK", response = SocialUserDTO.class),
+    	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),
+    	@ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponseDTO.class)
+    })
+    @ResponseStatus(code = HttpStatus.OK)
+	@GetMapping(value = "/details/{userName}", produces={"application/json"})
+	public ResponseEntity<SocialUserDTO> getUser(@PathVariable String userName) throws BadRequestException {
+		return new ResponseEntity<>(this.socialUserService.findByUserName(userName), HttpStatus.OK);
+	}
+    
+    @ApiOperation(value = "Edit Password for authenticated User")
     @ApiResponses({
     	@ApiResponse(code = 200, message = "OK", response = String.class),
     	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),
@@ -93,7 +107,7 @@ public class SocialUserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
-    @ApiOperation(value = "Edit Details")
+    @ApiOperation(value = "Edit Details for authenticated User")
     @ApiResponses({
     	@ApiResponse(code = 200, message = "OK", response = SocialUserDTO.class),
     	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),
@@ -108,7 +122,7 @@ public class SocialUserController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
     
-    @ApiOperation(value = "Delete User")
+    @ApiOperation(value = "Delete authenticated User")
     @ApiResponses({
     	@ApiResponse(code = 200, message = "OK", response = String.class),
     	@ApiResponse(code = 400, message = "Bad Request", response = ErrorResponseDTO.class),

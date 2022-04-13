@@ -22,7 +22,7 @@ import springfox.documentation.service.SecurityReference;
 public class SwaggerConfig {
 	
 	@Bean
-	public Docket apiDocket() {
+	public Docket apiDocket1() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.apiInfo(apiInfo())
 				.useDefaultResponseMessages(false)
@@ -31,6 +31,32 @@ public class SwaggerConfig {
 	            .groupName("User")
 	            .select().apis(RequestHandlerSelectors.basePackage("com.ganguli.socialappbackend.controller"))
 	            .paths(PathSelectors.ant("/api/users/**"))
+	            .build();
+	}
+	
+	@Bean
+	public Docket apiDocket2() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.apiInfo(apiInfo())
+				.useDefaultResponseMessages(false)
+				.securityContexts(Arrays.asList(securityContext()))
+			    .securitySchemes(Arrays.asList(apiKey()))
+	            .groupName("Follow")
+	            .select().apis(RequestHandlerSelectors.basePackage("com.ganguli.socialappbackend.controller"))
+	            .paths(PathSelectors.ant("/api/follow/**"))
+	            .build();
+	}
+	
+	@Bean
+	public Docket apiDocket3() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.apiInfo(apiInfo())
+				.useDefaultResponseMessages(false)
+				.securityContexts(Arrays.asList(securityContext()))
+			    .securitySchemes(Arrays.asList(apiKey()))
+	            .groupName("Post")
+	            .select().apis(RequestHandlerSelectors.basePackage("com.ganguli.socialappbackend.controller"))
+	            .paths(PathSelectors.ant("/api/post/**"))
 	            .build();
 	}
 	
