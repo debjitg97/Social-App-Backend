@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ganguli.socialappbackend.dto.PostAddDTO;
@@ -67,7 +68,7 @@ public class PostServiceImpl implements PostService {
 	public Page<PostDTO> getPostsByFollowed(String userName, int pageNo, int size) throws BadRequestException {
 		Optional<SocialUser> userOp = socialUserRepository.findByUserName(userName);
 		SocialUser user = userOp.orElseThrow(() -> new BadRequestException(userNameDoesNotExists));
-		Page<Post> postPage = postRepository.findPostsFromFollowed(user, PageRequest.of(pageNo, size));
+		Page<Post> postPage = postRepository.findPostsFromFollowed(user, PageRequest.of(pageNo, size, Sort.by("postId").descending()));
 		return postPage.map((post) -> new PostDTO(post.getPostId(), post.getTitle(), post.getDescription(), 
 				new SocialUserDTO(post.getSocialUser().getUserId(), post.getSocialUser().getFirstName(), post.getSocialUser().getLastName(),
 						post.getSocialUser().getUserName())));
