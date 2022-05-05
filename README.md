@@ -1,6 +1,5 @@
 # Social App Backend
-Backend Application for the Social App to host the REST APIs. 
-Hosted at https://social-app-apis.herokuapp.com/
+Backend Application for the Social App to host the REST APIs. The Social App is a Full Stack Application that allows users to follow/unfollow other users and view posts from the users they followed
 
 ## Features 
 * Uses Spring Security to authorize using JSON Web Tokens
@@ -14,5 +13,5 @@ Hosted at https://social-app-apis.herokuapp.com/
 
 ## Tech Stack
 * Java 
-* Spring Boot Framework
-* MySQL Database
+* Spring Boot
+* MySQL
