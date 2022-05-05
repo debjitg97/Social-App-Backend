@@ -1,5 +1,5 @@
 # Social App Backend
-Backend Application for the Social App to host the REST APIs. The Social App is a Full Stack Application that allows users to follow/unfollow other users and view posts from the users they followed
+Backend Application for the Social App to host the REST APIs. The Social App is a Backend Application that allows users to follow/unfollow other users and view posts from the users they followed
 
 ## Features 
 * Uses Spring Security to authorize using JSON Web Tokens
